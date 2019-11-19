@@ -1,6 +1,12 @@
 function intalarSW() {
+    let url = window.location.href;
+    let swLocation = '/twittor/sw.js';
+
     if (navigator.serviceWorker) {
-        navigator.serviceWorker.register('/sw.js');
+        if (url.includes('localhost')) {
+            swLocation = '/sw.js';
+        }
+        navigator.serviceWorker.register(swLocation);
     }
 }
 
@@ -10,15 +16,15 @@ function intalarSW() {
 
     intalarSW();
 
-    var ENTER_KEY = 13;
-    var newTodoDom = document.getElementById('new-todo');
-    var syncDom = document.getElementById('sync-wrapper');
+    let ENTER_KEY = 13;
+    let newTodoDom = document.getElementById('new-todo');
+    let syncDom = document.getElementById('sync-wrapper');
 
     // EDITING STARTS HERE (you dont need to edit anything above this line)
 
 
-    var db = new PouchDB('todos');
-    var remoteCouch = false;
+    let db = new PouchDB('todos');
+    let remoteCouch = false;
 
     db.changes({
         since: 'now',
@@ -29,7 +35,7 @@ function intalarSW() {
     function addTodo(text) {
         if (text.length <= 0) return;
 
-        var todo = {
+        let todo = {
             _id: new Date().toISOString(),
             title: text,
             completed: false
@@ -74,7 +80,7 @@ function intalarSW() {
     // The input box when editing a todo has blurred, we should save
     // the new title or delete the todo if the title is empty
     function todoBlurred(todo, event) {
-        var trimmedText = event.target.value.trim();
+        let trimmedText = event.target.value.trim();
         if (!trimmedText) {
             db.remove(todo);
         } else {
@@ -95,8 +101,8 @@ function intalarSW() {
 
     // User has double clicked a todo, display an input so they can edit the title
     function todoDblClicked(todo) {
-        var div = document.getElementById('li_' + todo._id);
-        var inputEditTodo = document.getElementById('input_' + todo._id);
+        let div = document.getElementById('li_' + todo._id);
+        let inputEditTodo = document.getElementById('input_' + todo._id);
         div.className = 'editing';
         inputEditTodo.focus();
     }
@@ -105,7 +111,7 @@ function intalarSW() {
     // (or delete)
     function todoKeyPressed(todo, event) {
         if (event.keyCode === ENTER_KEY) {
-            var inputEditTodo = document.getElementById('input_' + todo._id);
+            let inputEditTodo = document.getElementById('input_' + todo._id);
             inputEditTodo.blur();
         }
     }
@@ -113,33 +119,33 @@ function intalarSW() {
     // Given an object representing a todo, this will create a list item
     // to display it.
     function createTodoListItem(todo) {
-        var checkbox = document.createElement('input');
+        let checkbox = document.createElement('input');
         checkbox.className = 'toggle';
         checkbox.type = 'checkbox';
         checkbox.addEventListener('change', checkboxChanged.bind(this, todo));
 
-        var label = document.createElement('label');
+        let label = document.createElement('label');
         label.appendChild(document.createTextNode(todo.title));
         label.addEventListener('dblclick', todoDblClicked.bind(this, todo));
 
-        var deleteLink = document.createElement('button');
+        let deleteLink = document.createElement('button');
         deleteLink.className = 'destroy';
         deleteLink.addEventListener('click', deleteButtonPressed.bind(this, todo));
 
-        var divDisplay = document.createElement('div');
+        let divDisplay = document.createElement('div');
         divDisplay.className = 'view';
         divDisplay.appendChild(checkbox);
         divDisplay.appendChild(label);
         divDisplay.appendChild(deleteLink);
 
-        var inputEditTodo = document.createElement('input');
+        let inputEditTodo = document.createElement('input');
         inputEditTodo.id = 'input_' + todo._id;
         inputEditTodo.className = 'edit';
         inputEditTodo.value = todo.title;
         inputEditTodo.addEventListener('keypress', todoKeyPressed.bind(this, todo));
         inputEditTodo.addEventListener('blur', todoBlurred.bind(this, todo));
 
-        var li = document.createElement('li');
+        let li = document.createElement('li');
         li.id = 'li_' + todo._id;
         li.appendChild(divDisplay);
         li.appendChild(inputEditTodo);
@@ -153,7 +159,7 @@ function intalarSW() {
     }
 
     function redrawTodosUI(todos) {
-        var ul = document.getElementById('todo-list');
+        let ul = document.getElementById('todo-list');
         ul.innerHTML = '';
         todos.forEach(function(todo) {
             ul.appendChild(createTodoListItem(todo.doc));

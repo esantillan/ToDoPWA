@@ -1,6 +1,6 @@
 function intalarSW() {
     let url = window.location.href;
-    let swLocation = '/twittor/sw.js';
+    let swLocation = '/ToDoPWA/sw.js';
 
     if (navigator.serviceWorker) {
         if (url.includes('localhost')) {

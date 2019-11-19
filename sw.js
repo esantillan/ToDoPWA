@@ -1,3 +1,6 @@
+// imports
+importScripts('js/sw-utils.js');
+
 const CACHE_STATIC_NAME = 'static-v1';
 const CACHE_DYNAMIC_NAME = 'dynamic-v1';
 const CACHE_INMUTABLE_NAME = 'inmutable-v1';
@@ -18,15 +21,7 @@ function limpiarCache(cacheName, numeroItems) {
 }
 
 self.addEventListener('install', installEvent => {
-    // const cacheStaticProm = caches.open(CACHE_STATIC_NAME)
-    //     .then(cache => {
-    //         return cache.addAll([
-    //             'style/base.css',
-    //             'js/base.js',
-    //             'js/app.js'
-    //         ]);
-    //     });
-    const cacheProm = caches.open(CACHE_STATIC_NAME)
+    const cacheStaticProm = caches.open(CACHE_STATIC_NAME)
         .then(cache => {
 
             return cache.addAll([
@@ -35,7 +30,8 @@ self.addEventListener('install', installEvent => {
                 'js/base.js',
                 'js/app.js',
                 'img/favicon.ico',
-                'style/bg.png'
+                'style/bg.png',
+                'js/sw-utils.js'
             ]);
 
 
@@ -45,8 +41,7 @@ self.addEventListener('install', installEvent => {
     const cacheInmutableProm = caches.open(CACHE_INMUTABLE_NAME)
         .then(cache => cache.add('https://cdn.jsdelivr.net/npm/pouchdb@7.1.1/dist/pouchdb.min.js'));
 
-    // console.log(installEvent);
-    installEvent.waitUntil(Promise.all([cacheProm, /*cacheStaticProm /*, cacheInmutableProm*/ ]));
+    installEvent.waitUntil(Promise.all([cacheStaticProm, cacheInmutableProm]));
 
     // activo el Service Worker
     self.skipWaiting();
@@ -81,11 +76,16 @@ self.addEventListener('activate', activateEvent => {
 self.addEventListener('fetch', fetchEvent => {
     const respuesta = caches.match(fetchEvent.request)
         .then(respuestaEvento => {
-            //si existe el archivo en el caché lo devuelvo directamente
-            if (respuestaEvento) {
-                console.log('devuelto desde la caché');
-                return respuestaEvento;
+
+            if (res) { //si existe el archivo en el caché lo devuelvo directamente
+                return res;
+            } else {
+                return fetch(e.request).then(newRes => {
+                    return actualizaCacheDinamico(DYNAMIC_CACHE, e.request, newRes);
+                });
             }
+
+
 
             /**
              * Si no existe consulto a la web 

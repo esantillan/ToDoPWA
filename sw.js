@@ -77,11 +77,11 @@ self.addEventListener('fetch', fetchEvent => {
     const respuesta = caches.match(fetchEvent.request)
         .then(respuestaEvento => {
 
-            if (res) { //si existe el archivo en el caché lo devuelvo directamente
-                return res;
+            if (respuestaEvento) { //si existe el archivo en el caché lo devuelvo directamente
+                return respuestaEvento;
             } else {
-                return fetch(e.request).then(newRes => {
-                    return actualizaCacheDinamico(DYNAMIC_CACHE, e.request, newRes);
+                return fetch(fetchEvent.request).then(newRes => {
+                    return actualizaCacheDinamico(DYNAMIC_CACHE, fetchEvent.request, newRes);
                 });
             }
 

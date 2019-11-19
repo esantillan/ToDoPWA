@@ -81,7 +81,7 @@ self.addEventListener('fetch', fetchEvent => {
                 return respuestaEvento;
             } else {
                 return fetch(fetchEvent.request).then(newRes => {
-                    return actualizaCacheDinamico(DYNAMIC_CACHE, fetchEvent.request, newRes);
+                    return actualizarCacheDinamico(DYNAMIC_CACHE, fetchEvent.request, newRes);
                 });
             }
 

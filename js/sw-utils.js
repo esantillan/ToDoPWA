@@ -1,4 +1,4 @@
-function acutalizarCacheDinamico(dynamicCache, req, res) {
+function actualizarCacheDinamico(dynamicCache, req, res) {
     if (res.ok) {
         return caches.open(dynamicCache)
             .then(cache => {
